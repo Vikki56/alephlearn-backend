@@ -12,7 +12,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.example.demo.repo.RoomKickRepository;
 
-@CrossOrigin(origins = {"http://127.0.0.1:5500","http://localhost:5500"})
+@CrossOrigin(
+    originPatterns = {
+      "http://localhost:*",
+      "http://127.0.0.1:*",
+      "https://alephlearn.com",
+      "https://www.alephlearn.com",
+      "https://app.alephlearn.com",
+      "https://*.pages.dev"
+    },
+    allowCredentials = "true"
+  )
 @RestController
 @RequestMapping("/api/chat")
 public class ChatRestController {
