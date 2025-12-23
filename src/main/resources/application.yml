@@ -8,6 +8,13 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+
   jpa:
     hibernate:
       ddl-auto: ${JPA_DDL_AUTO:update}
@@ -16,6 +23,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
 
   servlet:
     multipart:
@@ -40,6 +48,7 @@ spring:
 
 server:
   port: ${PORT:8080}
+  shutdown: graceful
 
 security:
   jwt:
@@ -61,3 +70,5 @@ logging:
   level:
     root: INFO
     org.springframework.security: INFO
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql.BasicBinder: OFF
