@@ -9,5 +9,9 @@
     FROM eclipse-temurin:17-jre
     WORKDIR /app
     COPY --from=build /app/target/*.jar app.jar
+    
+    # optional (docs only)
     EXPOSE 8080
+    
+    # Render/Platforms often set PORT env. Spring can read it if you map server.port=${PORT:8080}
     ENTRYPOINT ["java","-jar","app.jar"]
