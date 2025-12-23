@@ -2,20 +2,17 @@ spring:
   application:
     name: AlephLearn
 
-  profiles:
-    active: dev
-
   datasource:
-    url: jdbc:postgresql://localhost:5432/alephlearn
-    username: vikkiraj
-    password: Aleph@123
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update   # (neeche note dekho)
+      ddl-auto: ${JPA_DDL_AUTO:update}
     open-in-view: false
-    show-sql: true
+    show-sql: ${JPA_SHOW_SQL:false}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -29,8 +26,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USER}
-    password: ${MAIL_PASS}
+    username: ${MAIL_USER:}
+    password: ${MAIL_PASS:}
     properties:
       mail:
         smtp:
@@ -42,23 +39,16 @@ spring:
           writetimeout: 5000
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 security:
   jwt:
-    secret: QPAIjGm9G+ht0idFX7N1ip3MBLfu+gPGEN7yDCWkUoDhN1+pmC8HU5m85yqZjqygqvY5ZSTWNqtPwb07IBpVPw==
+    secret: ${JWT_SECRET}
     exp-min: ${JWT_EXP_MIN:60}
 
 app:
   upload:
-    reports-dir: uploads/reports
-
-logging:
-  file:
-    name: application.log
-  level:
-    root: INFO
-    org.springframework.security: INFO
+    reports-dir: ${UPLOAD_REPORTS_DIR:/app/uploads/reports}
 
 springdoc:
   api-docs:
@@ -66,3 +56,8 @@ springdoc:
   swagger-ui:
     path: /swagger-ui/index.html
   override-with-generic-response: false
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: INFO
