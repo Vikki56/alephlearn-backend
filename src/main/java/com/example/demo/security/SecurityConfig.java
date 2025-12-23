@@ -33,10 +33,18 @@ public class SecurityConfig {
         // ---- CORS config for local dev + Swagger + frontend ----
         CorsConfiguration corsCfg = new CorsConfiguration();
         corsCfg.setAllowedOriginPatterns(List.of(
-                "http://localhost:*",
-                "http://127.0.0.1:*",
-                "null"
-        ));
+            "http://localhost:*",
+            "http://127.0.0.1:*",
+            "null",
+    
+            // ---- PROD / HOSTED FRONTEND ----
+            "https://alephlearn.com",
+            "https://www.alephlearn.com",
+            "https://app.alephlearn.com",
+    
+            // Cloudflare Pages default domains (agar use ho)
+            "https://*.pages.dev"
+    ));
         corsCfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"));
         corsCfg.setAllowedHeaders(List.of("*"));
         corsCfg.setAllowCredentials(true);

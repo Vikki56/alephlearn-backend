@@ -19,7 +19,15 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chatHandler, "/ws/chat")
                 // Allow any localhost/127.0.0.1 port in dev
-                .setAllowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*");
+                .setAllowedOriginPatterns(
+                    "http://localhost:*",
+                    "http://127.0.0.1:*",
+            
+                    "https://alephlearn.com",
+                    "https://www.alephlearn.com",
+                    "https://app.alephlearn.com",
+                    "https://*.pages.dev"
+            );
                 // no credentials on WS, patterns are fine
     }
 }
