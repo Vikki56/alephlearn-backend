@@ -12,22 +12,32 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // This is what SockJS + STOMP client should connect to
         registry.addEndpoint("/ws/notify")
-                .setAllowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*");
-
-        // SockJS fallback endpoint
+                .setAllowedOriginPatterns(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*",
+                        "null",
+    
+                        // PROD domains
+                        "https://alephlearn.com",
+                        "https://www.alephlearn.com",
+                        "https://app.alephlearn.com",
+    
+                        // Cloudflare Pages default
+                        "https://*.pages.dev"
+                );
+    
         registry.addEndpoint("/ws/notify")
-                .setAllowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*")
+                .setAllowedOriginPatterns(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*",
+                        "null",
+    
+                        "https://alephlearn.com",
+                        "https://www.alephlearn.com",
+                        "https://app.alephlearn.com",
+                        "https://*.pages.dev"
+                )
                 .withSockJS();
-    }
-
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // Client subscribes here
-        registry.enableSimpleBroker("/topic", "/queue");
-
-        // If later you send from client to server using STOMP (optional)
-        registry.setApplicationDestinationPrefixes("/app");
     }
 }
