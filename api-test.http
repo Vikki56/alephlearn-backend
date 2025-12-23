@@ -1,0 +1,102 @@
+###
+POST http://localhost:8080/api/doubts/1/answers
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "body": "To delete a node with two children in BST...",
+  "attachmentUrl": null
+}
+
+###
+### Get Answers of doubt 1
+GET http://localhost:8080/api/doubts/1/answers
+
+###
+### Edit Answer (answerId = 1)
+PUT http://localhost:8080/api/doubts/answers/1
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "body": "Updated explanation for BST deletion...",
+  "attachmentUrl": null
+}
+
+###
+### Accept Answer (asker userId = 1)
+POST http://localhost:8080/api/doubts/answers/1/accept
+Content-Type: application/json
+
+{
+  "userId": 1
+}
+
+
+### Ping controller
+GET http://localhost:8080/api/doubts/ping
+
+### Add Answer
+POST http://localhost:8080/api/doubts/1/answers
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "body": "test answer",
+  "attachmentUrl": null
+}
+
+### Add Answer (user 1 answering doubt 1)
+POST http://localhost:8080/api/doubts/1/answers
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "body": "test answer",
+  "attachmentUrl": null
+}
+
+### Get doubt 1
+GET http://localhost:8080/api/doubts/1
+### Accept Answer (asker userId = 1)
+POST http://localhost:8080/api/doubts/answers/1/accept
+Content-Type: application/json
+
+{
+  "userId": 1
+}
+
+GET http://localhost:8080/api/doubts/1
+
+
+
+
+
+### List latest doubts (no filter)
+GET http://localhost:8080/api/doubts?page=0&size=10
+
+###
+
+### Filter by subject + OPEN status, sort by most liked
+GET http://localhost:8080/api/doubts?subject=Data%20Structures&status=OPEN&sort=MOST_LIKED&page=0&size=10
+
+###
+
+### Unanswered doubts (any subject)
+GET http://localhost:8080/api/doubts?sort=UNANSWERED&page=0&size=10
+
+###
+
+### My doubts for user 1
+GET http://localhost:8080/api/doubts/mine?userId=1&page=0&size=10
+
+
+
+GET http://localhost:8080/api/quizzes/public
+
+
+
+GET http://127.0.0.1:5500/Fronted/quizzes.html?code=abc123
+
+
+POST 

@@ -1,0 +1,32 @@
+<!doctype html>
+<meta charset="utf-8" />
+<input id="msg" value="hi" />
+<button id="send">Send</button>
+<pre id="log"></pre>
+
+<script>
+const log = (...a) => { logBox.textContent += a.join(' ') + '\n'; };
+const logBox = document.getElementById('log');
+const btn = document.getElementById('send');
+const msg = document.getElementById('msg');
+
+// Use your Spring endpoint:
+const WS_URL = "ws://localhost:8080/ws/chat";
+
+const ws = new WebSocket(WS_URL);
+
+ws.onopen    = () => log('[open]', WS_URL);
+ws.onmessage = (e) => log('←', e.data);
+ws.onerror   = (e) => { console.error(e); log('[error]', e?.message ?? '(no message)'); };
+ws.onclose   = (e) => log('[close]', e.code, e.reason || '');
+
+btn.onclick = () => {
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(msg.value);
+    log('→', msg.value);
+    msg.value = '';
+  } else {
+    log('[not open]', ws.readyState);
+  }
+};
+</script>
