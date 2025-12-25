@@ -18,12 +18,10 @@ public class ProfileLike {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // jiska profile like hua
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "target_user_id", nullable = false)
     private User targetUser;
 
-    // kisne like kiya
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "liked_by_id", nullable = false)
     private User likedBy;
@@ -36,7 +34,6 @@ public class ProfileLike {
         createdAt = Instant.now();
     }
 
-    // getters / setters
 
     public Long getId() {
         return id;

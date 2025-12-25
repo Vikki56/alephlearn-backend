@@ -19,10 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-// import com.example.demo.dto.UserActivityDto;
 import com.example.demo.dto.ActivityStatsDto;
-// import com.example.demo.entity.AnswerReply;
-// import com.example.demo.repo.AnswerReplyRepository;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -68,21 +65,16 @@ public Doubt updateDoubt(Long id, Doubt updated) {
     Doubt existing = doubtRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Doubt not found"));
 
-    // Title & Description always update
     existing.setTitle(updated.getTitle());
     existing.setDescription(updated.getDescription());
 
-    // Subject tabhi change kare jab null/blank na ho
     if (updated.getSubject() != null && !updated.getSubject().isBlank()) {
         existing.setSubject(updated.getSubject());
     }
 
-    // Tags tabhi change kare jab list empty na ho
     if (updated.getTags() != null && !updated.getTags().isEmpty()) {
         existing.setTags(updated.getTags());
     }
-
-    // Safety: subject kabhi null NA ho
     if (existing.getSubject() == null || existing.getSubject().isBlank()) {
         existing.setSubject("General");
     }
@@ -112,7 +104,6 @@ public Doubt saveDoubt(Doubt doubt) {
 
     AnswerReply saved = answerReplyRepository.save(reply);
 
-    // 🔔 Notify answer solver
     User solver = answer.getSolver();
     if (!solver.getId().equals(userId)) {
         notificationService.notify(
@@ -156,7 +147,6 @@ public void notifyAnswerLiked(Long answerId, Long userId) {
 }
 
     // ---------- Create ----------
-    // ---------- Create ----------
     public Doubt createDoubt(Doubt doubt) {
 
         User asker = doubt.getAsker();
@@ -164,14 +154,12 @@ public void notifyAnswerLiked(Long answerId, Long userId) {
             throw new RuntimeException("Asker must not be null");
         }
 
-        // 🔹 academic profile fetch
         AcademicProfile profile = academicProfileRepository
                 .findByUser(asker)
                 .orElseThrow(() ->
                         new RuntimeException("Academic profile not found for user: " + asker.getId())
                 );
 
-        // 🔹 tag the doubt with academic info (for filtering)
         doubt.setEducationLevel(profile.getEducationLevel());
         doubt.setMainStream(profile.getMainStream());
         doubt.setSpecialization(profile.getSpecialization());
@@ -179,15 +167,13 @@ public void notifyAnswerLiked(Long answerId, Long userId) {
         return doubtRepository.save(doubt);
     }
 
-    // ---------- List / search doubts with filters ----------
-    // ---------- List / search doubts with filters (STREAM-AWARE) ----------
+
     public Page<Doubt> listDoubts(String subject,
         DoubtStatus status,
         String sort,
         int page,
         int size) {
 
-// 0) Current logged-in user
 User current = AuthUser.current();
 if (current == null) {
 throw new RuntimeException("No authenticated user in context");
@@ -203,7 +189,6 @@ String edu  = profile.getEducationLevel();
 String main = profile.getMainStream();
 String spec = profile.getSpecialization();
 
-// 1) Decide sort order
 Sort sortObj;
 if ("MOST_LIKED".equalsIgnoreCase(sort)) {
 sortObj = Sort.by(Sort.Direction.DESC, "likeCount");
@@ -221,7 +206,6 @@ Pageable pageable = PageRequest.of(page, size, sortObj);
 boolean hasSubject = subject != null && !subject.isBlank();
 boolean hasStatus  = status != null;
 
-// 🔹 Ab saare queries academic fields ke saath filter honge
 if (hasSubject && hasStatus) {
 return doubtRepository
 .findByEducationLevelIgnoreCaseAndMainStreamIgnoreCaseAndSpecializationIgnoreCaseAndSubjectIgnoreCaseAndStatus(
@@ -247,13 +231,11 @@ return doubtRepository
         Doubt doubt = doubtRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Doubt not found: " + id));
 
-        // If userId is null → treat as anonymous: always count view
         if (userId == null) {
             doubt.setViewCount(doubt.getViewCount() + 1);
             return doubtRepository.save(doubt);
         }
 
-        // find user
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -346,7 +328,6 @@ return doubtRepository
         doubt.setAnswerCount(doubt.getAnswerCount() + 1);
         doubtRepository.save(doubt);
 
-        // 🔔 Notify asker that someone answered their doubt
         User asker = doubt.getAsker();
         if (asker != null && !asker.getId().equals(userId)) {
             notificationService.notify(
@@ -388,7 +369,6 @@ return doubtRepository
             throw new RuntimeException("Only the asker can accept an answer");
         }
 
-        // mark this answer accepted
         answer.setAccepted(true);
         doubt.setAcceptedAnswer(answer);
         doubt.setStatus(DoubtStatus.RESOLVED);
@@ -396,7 +376,6 @@ return doubtRepository
         DoubtAnswer saved = doubtAnswerRepository.save(answer);
         doubtRepository.save(doubt);
 
-        // 🔔 Notify solver that their answer was accepted
         User solver = saved.getSolver();
         if (solver != null && !solver.getId().equals(userId)) {
             notificationService.notify(
@@ -424,11 +403,9 @@ return doubtRepository
         LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
 
-        // 📅 Start of this week (Monday 00:00)
         LocalDate startOfWeekDate = today.with(DayOfWeek.MONDAY);
         LocalDateTime startOfWeek = startOfWeekDate.atStartOfDay();
 
-        // 📅 Start of this month (1st 00:00)
         LocalDate startOfMonthDate = today.withDayOfMonth(1);
         LocalDateTime startOfMonth = startOfMonthDate.atStartOfDay();
 

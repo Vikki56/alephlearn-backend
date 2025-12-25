@@ -40,7 +40,6 @@ public class Message {
     @Column(nullable = false)
     private boolean pinned = false;
 
-    // ✅ added field for email
     @Column(length = 128)
     private String userEmail;
 
@@ -54,10 +53,8 @@ public class Message {
     public void setText(String text) { this.text = text; }
     public Instant getTs() { return ts; }
 
-    // existing Instant setter
     public void setTs(Instant ts) { this.ts = ts; }
 
-    // ✅ new overload for long
     public void setTs(long epochMillis) {
         this.ts = Instant.ofEpochMilli(epochMillis);
     }
@@ -73,7 +70,6 @@ public class Message {
     public boolean isPinned() { return pinned; }
     public void setPinned(boolean pinned) { this.pinned = pinned; }
 
-    // ✅ new getters/setters for userEmail
     public String getUserEmail() { return userEmail; }
     public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
 }

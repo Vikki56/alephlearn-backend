@@ -18,7 +18,6 @@ public class AiController {
         this.service = service;
     }
 
-    // ✅ Resolved doubts library
     @GetMapping("/resolved")
     public Page<ResolvedDoubtCardDto> resolved(
             @RequestParam(defaultValue = "0") int page,
@@ -27,19 +26,16 @@ public class AiController {
         return service.listResolved(page, size);
     }
 
-    // ✅ Create AI explanation request
     @PostMapping("/explanations")
     public CreateAiExplanationResponse create(@RequestBody CreateAiExplanationRequest req) {
         return service.createExplanation(req.doubtId());
     }
 
-    // ✅ Get chat history
     @GetMapping("/explanations/{id}/messages")
     public ResponseEntity<?> messages(@PathVariable Long id) {
         return ResponseEntity.ok(service.getMessages(id));
     }
 
-    // ✅ Send user message in AI chat
     @PostMapping("/explanations/{id}/messages")
     public ResponseEntity<?> send(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String text = body.get("text");

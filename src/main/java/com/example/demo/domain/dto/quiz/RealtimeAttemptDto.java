@@ -4,8 +4,8 @@ import java.time.Instant;
 
 public class RealtimeAttemptDto {
     private Long id;
-    private String status;       // optional
-    private Instant createdAt;   // optional
+    private String status;       
+    private Instant createdAt;   
 
     public Long getId() {
         return id;

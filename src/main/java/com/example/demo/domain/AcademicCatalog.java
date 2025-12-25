@@ -9,7 +9,6 @@ public final class AcademicCatalog {
 
     private AcademicCatalog() {}
 
-    // 1) Education Level (top dropdown)
     public static final List<String> EDUCATION_LEVELS = List.of(
             "10th",
             "11-12",
@@ -19,7 +18,6 @@ public final class AcademicCatalog {
             "PhD / Research"
     );
 
-    // 2) For each education level → available main streams
     public static final Map<String, List<String>> MAIN_STREAMS = Map.ofEntries(
             entry("10th", List.of("General")),
 
@@ -66,7 +64,6 @@ public final class AcademicCatalog {
             ))
     );
 
-    // 3) For each main stream → specializations
     public static final Map<String, List<String>> SPECIALIZATIONS = Map.ofEntries(
 
             entry("Science", List.of(

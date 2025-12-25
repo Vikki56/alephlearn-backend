@@ -12,21 +12,17 @@ public class QuizQuestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Kis quiz ka question hai
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id", nullable = false)
     private Quiz quiz;
 
-    // MCQ / TRUE_FALSE / CODING
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private QuizQuestionType type;
 
-    // Question text
     @Column(nullable = false, length = 4000)
     private String text;
 
-    // --- MCQ options (optional for other types) ---
     @Column(length = 1000)
     private String option1;
 
@@ -39,17 +35,13 @@ public class QuizQuestion {
     @Column(length = 1000)
     private String option4;
 
-    // For MCQ: index of correct option (0-3)
     private Integer correctIndex;
 
-    // For TRUE_FALSE: correct bool
     private Boolean correctBool;
 
-    // For CODING: reference answer / expected output (optional)
     @Column(length = 4000)
     private String codingAnswer;
 
-    // Order inside quiz (Q1, Q2, Q3…)
     @Column(nullable = false)
     private int ordinalPosition;
 

@@ -54,7 +54,7 @@ public class AdminUserService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ NEW: blocked users (temporary block)
+
     @Transactional(readOnly = true)
     public List<Map<String, Object>> blockedUsers() {
         Instant now = Instant.now();
@@ -65,7 +65,6 @@ public class AdminUserService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ NEW: banned users (permanent ban => blocked=true AND blockedUntil=null)
     @Transactional(readOnly = true)
     public List<Map<String, Object>> bannedUsers() {
         return users.findAll().stream()
@@ -75,7 +74,7 @@ public class AdminUserService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ NEW: unban / unblock
+
     @Transactional
     public void unban(Long id) {
         User u = users.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -92,8 +91,8 @@ public class AdminUserService {
         m.put("email", u.getEmail());
         m.put("role", (u.getRole() == null ? "USER" : u.getRole().name()));
         m.put("blocked", u.isBlocked());
-        m.put("blockedUntil", u.getBlockedUntil()); // can be null ✅
-        m.put("blockReason", u.getBlockReason());   // can be null ✅
+        m.put("blockedUntil", u.getBlockedUntil()); 
+        m.put("blockReason", u.getBlockReason());   
         return m;
     }
     

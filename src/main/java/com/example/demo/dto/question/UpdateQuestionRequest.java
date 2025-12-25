@@ -6,6 +6,6 @@ public record UpdateQuestionRequest(
         @Size(max = 255)  String title,
         @Size(max = 4000) String body,
         Integer maxClaimers,
-        String status,            // optional change of status
-        Long acceptedAnswerId     // set/clear accepted answer
+        String status,         
+        Long acceptedAnswerId     
 ) {}

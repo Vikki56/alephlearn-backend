@@ -22,7 +22,6 @@ public class Answer {
 
     private Instant createdAt = Instant.now();
 
-    // ✅ NEW: store uploaded image public URL
     private String imageUrl;
 
     // --- getters & setters ---

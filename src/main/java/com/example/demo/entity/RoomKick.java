@@ -17,7 +17,7 @@ public class RoomKick {
     private Long questionId;
 
     @Column(nullable = false, length = 300)
-    private String room; // full room key: subject/slug (e.g. btech_cse/doubt-q-48)
+    private String room; 
 
     @Column(nullable = false, length = 200)
     private String kickedUserEmail;

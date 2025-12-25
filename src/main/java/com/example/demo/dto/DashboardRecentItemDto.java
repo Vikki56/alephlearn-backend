@@ -2,13 +2,13 @@ package com.example.demo.dto;
 
 public class DashboardRecentItemDto {
 
-    // "QUIZ" / "PAPER"
+
     private String type;
 
     private Long id;
     private String title;
     private String subtitle;
-    private String meta; // e.g. "2024 · Midsem · 32 downloads"
+    private String meta; 
 
     public DashboardRecentItemDto() {
     }

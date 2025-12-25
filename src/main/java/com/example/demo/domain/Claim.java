@@ -19,10 +19,8 @@ public class Claim {
 
     private Instant createdAt = Instant.now();
 
-    /** null means no expiry */
     private Instant expiresAt;
 
-    // --- getters & setters ---
     public Long getId() { return id; }
 
     public Long getQuestionId() { return questionId; }
@@ -37,7 +35,6 @@ public class Claim {
     public Instant getExpiresAt() { return expiresAt; }
     public void setExpiresAt(Instant expiresAt) { this.expiresAt = expiresAt; }
 
-    // convenience
     @Transient
     public boolean isActive() {
         return expiresAt == null || expiresAt.isAfter(Instant.now());

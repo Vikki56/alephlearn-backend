@@ -25,7 +25,6 @@ public class LoginActivityService {
 
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
 
-        // ek din me ek hi row
         if (!loginDays.existsByUserAndLoginDate(user, today)) {
             UserLoginDay d = new UserLoginDay();
             d.setUser(user);
@@ -57,10 +56,10 @@ public class LoginActivityService {
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
         LocalDate startOfYear = today.withDayOfYear(1);
 
-        // existing method use kar rahe hain
+
         return loginDays.findByUserAndLoginDateBetween(user, startOfYear, today)
                 .stream()
-                .map(UserLoginDay::getLoginDate)   // entity → LocalDate
+                .map(UserLoginDay::getLoginDate)   
                 .distinct()
                 .sorted()
                 .toList();

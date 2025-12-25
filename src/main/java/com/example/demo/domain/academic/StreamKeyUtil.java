@@ -2,12 +2,7 @@ package com.example.demo.domain.academic;
 
 import com.example.demo.domain.AcademicProfile;
 
-/**
- * AcademicProfile se ek normalized stream key banata hai.
- * Example:
- *   level = "Graduation", stream = "Engineering", spec = "Computer Science"
- *   -> "graduation_engineering_computer_science"
- */
+
 public final class StreamKeyUtil {
 
     private StreamKeyUtil() {
@@ -31,9 +26,9 @@ public final class StreamKeyUtil {
         }
         return raw.toLowerCase()
                   .trim()
-                  // saare non a-z/0-9 ko underscore
+                 
                   .replaceAll("[^a-z0-9]+", "_")
-                  // starting / ending extra underscores hata do
+                
                   .replaceAll("^_+|_+$", "");
     }
 }

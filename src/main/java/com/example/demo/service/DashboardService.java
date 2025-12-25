@@ -120,7 +120,7 @@ public class DashboardService {
         activity.setLoginDatesThisYear(profile.getLoginDatesThisYear());
 
         // ---------- 4) Active chats (placeholder abhi 0) ----------
-        long activeChats = 0L; // TODO: chat WS se wire karna (ChatHandler se)
+        long activeChats = 0L; 
 
         // ---------- 5) Trending discussions (doubts + quizzes) ----------
         List<DashboardTrendingItemDto> trendingItems = buildTrending(currentUser);
@@ -200,7 +200,6 @@ public class DashboardService {
             quizPool = quizRepository.findByIsPublicTrueOrderByCreatedAtDesc();
         }
 
-        // in-memory sort by totalAttempts desc, then createdAt desc
         quizPool.sort((a, b) -> {
             int cmp = Long.compare(b.getTotalAttempts(), a.getTotalAttempts());
             if (cmp != 0) return cmp;

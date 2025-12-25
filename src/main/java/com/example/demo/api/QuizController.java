@@ -27,7 +27,6 @@ import com.example.demo.domain.dto.quiz.QuizAttemptDto;
 import java.time.Instant;
 import java.util.ArrayList;
 import com.example.demo.domain.dto.quiz.AttemptHistoryItem;
-// import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import java.util.List;
 import java.time.Instant;
 import java.util.HashMap;
@@ -98,14 +97,14 @@ public ResponseEntity<Void> hasMyRealtimeAttempt(
 
     boolean exists = quizAttemptRepository
             .findByQuizAndUserAndRealtime(quiz, user, true)
-            .filter(a -> !a.isBanned())   // 👈 banned ko ignore karo
+            .filter(a -> !a.isBanned())   
             .isPresent();
 
     if (exists) {
-        // still inside room
+
         return ResponseEntity.ok().build();
     } else {
-        // ya to attempt hi nahi, ya banned → front-end ko "removed / banned" dikhana chahiye
+
         return ResponseEntity.notFound().build();
     }
 }
@@ -114,7 +113,7 @@ public ResponseEntity<Void> hasMyRealtimeAttempt(
     @GetMapping("/{quizId}/realtime/participants")
     public List<RealtimeParticipantDto> getRealtimeParticipants(
             @PathVariable Long quizId,
-            @AuthenticationPrincipal User currentUser   // 👈 yahan pe tum jo bhi principal type use kar rahe ho, woh likhna
+            @AuthenticationPrincipal User currentUser  
     ) {
         return quizService.getRealtimeParticipants(quizId, currentUser);
     }
@@ -147,7 +146,6 @@ public ResponseEntity<List<AttemptHistoryItem>> getAttemptHistory(
         return (instant == null) ? null : instant.toString();
     }
 
-    // 2) list all public quizzes (Quizzes page)
     @GetMapping("/public")
     public ResponseEntity<List<QuizSummaryResponse>> getPublicQuizzes(
             @Parameter(hidden = true) @AuthenticationPrincipal User currentUser
@@ -155,7 +153,6 @@ public ResponseEntity<List<AttemptHistoryItem>> getAttemptHistory(
         return ResponseEntity.ok(quizService.listPublicQuizzes(currentUser));
     }
 
-    // 3) list my quizzes (host tab)
     @GetMapping("/mine")
     public ResponseEntity<List<QuizSummaryResponse>> getMyQuizzes(
             @Parameter(hidden = true) @AuthenticationPrincipal User currentUser
@@ -183,12 +180,11 @@ public List<RealtimeParticipantDto> bannedUsers(@PathVariable Long quizId) {
                     a.getUser().getId(),
                     a.getUser().getName(),
                     a.getUser().getEmail(),
-                    false // removable not needed for banned list
+                    false 
             )).toList();
 }
     
 
-    // 4) get quiz by joinCode (public/private link open)
     @Transactional(readOnly = true)
     @GetMapping("/code/{joinCode}")
     public QuizDetailResponse getQuizDetailByJoinCode(@PathVariable String joinCode) {
@@ -196,7 +192,7 @@ public List<RealtimeParticipantDto> bannedUsers(@PathVariable Long quizId) {
         return buildQuizDetailResponse(quiz);
     }
 
-    // 5) get quiz by id (attempt page use karega)
+
     @Transactional(readOnly = true)
     @GetMapping("/{quizId}")
     public QuizDetailResponse getQuizDetailById(@PathVariable Long quizId) {
@@ -369,7 +365,6 @@ public ResponseEntity<?> joinState(
         dto.setTimeTakenMillis(attempt.getTimeTakenMillis());
         dto.setSubmittedAt(attempt.getSubmittedAt());
     
-        // 🔹 NEW: analytics fields
         dto.setTotalQuestions(attempt.getTotalQuestions());
         dto.setCorrectCount(attempt.getCorrectCount());
         dto.setWrongCount(attempt.getWrongCount());

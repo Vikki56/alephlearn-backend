@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-// import static org.mockito.ArgumentMatchers.eq;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -54,11 +53,7 @@ public class AiExplanationService {
     private boolean eq(String a, String b){
         return (a==null?"":a.trim()).equalsIgnoreCase(b==null?"":b.trim());
     }
-    /**
-     * ✅ Resolved Doubts Library (per user)
-     * IMPORTANT: This must show RESOLVED doubts (with accepted answer) to ANY logged-in user,
-     * because your AI flow says: "any user viewing a RESOLVED doubt can click AI".
-     */
+
     public Page<ResolvedDoubtCardDto> listResolved(int page, int size) {
         var pageable = PageRequest.of(page, Math.min(Math.max(size, 1), 50));
     
@@ -75,11 +70,7 @@ public class AiExplanationService {
                 .map(d -> new ResolvedDoubtCardDto(d.getId(), d.getSubject(), d.getTitle(), d.getUpdatedAt()));
     }
 
-    /**
-     * ✅ Create explanation for a resolved doubt.
-     * Rule: ANY user can request AI explanation for a RESOLVED doubt with accepted answer.
-     * The explanation is always private (AiExplanation.user = current requester).
-     */
+
     public CreateAiExplanationResponse createExplanation(Long doubtId) {
         User current = AuthUser.current();
         if (current == null) throw new RuntimeException("Unauthenticated");
@@ -111,25 +102,22 @@ if (!eq(doubt.getEducationLevel(), sk.educationLevel()) ||
         DoubtAnswer accepted = doubt.getAcceptedAnswer();
 
         AiExplanation expl = new AiExplanation();
-        expl.setUser(current);            // requester (private AI chat owner)
+        expl.setUser(current);            
         expl.setDoubt(doubt);
         expl.setAcceptedAnswer(accepted);
         expl.setStatus(AiExplanation.Status.PENDING);
 
         AiExplanation saved = explanationRepo.save(expl);
 
-        // build prompt (reserved for premium LLM or future)
         @SuppressWarnings("unused")
         String prompt = promptBuilder.buildPrompt(doubt, accepted);
 
-        // ✅ For now: local generator always generates initial explanation.
         String explanationText = localGen.generate(doubt, accepted);
 
         saved.setFinalExplanation(explanationText);
         saved.setStatus(AiExplanation.Status.DONE);
         saved = explanationRepo.save(saved);
 
-        // seed AI chat with initial explanation
         AiChatMessage aiMsg = new AiChatMessage();
         aiMsg.setExplanation(saved);
         aiMsg.setSender(AiChatMessage.Sender.AI);
@@ -175,7 +163,7 @@ if (!eq(doubt.getEducationLevel(), sk.educationLevel()) ||
         boolean premium = entitlement.isPremium(current);
         String reply = premium
                 ? llm.followUpReply(expl.getDoubt(), expl.getAcceptedAnswer(), text.trim())
-                : ("✅ Here’s a simpler view based on the accepted answer:\n\n" + localGen.generate(expl.getDoubt(), expl.getAcceptedAnswer()));
+                : (" Here’s a simpler view based on the accepted answer:\n\n" + localGen.generate(expl.getDoubt(), expl.getAcceptedAnswer()));
 
         AiChatMessage am = new AiChatMessage();
         am.setExplanation(expl);

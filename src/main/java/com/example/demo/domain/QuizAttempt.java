@@ -21,7 +21,6 @@ public class QuizAttempt {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // ---- basic result ----
     @Column(name = "score")
     private Integer score;
 
@@ -34,7 +33,6 @@ public class QuizAttempt {
     @Column(name = "is_realtime")
     private boolean realtime;
 
-    // ---- realtime helpers ----
     @Column(name = "joined_at")
     private Instant joinedAt;
 
@@ -44,8 +42,7 @@ public class QuizAttempt {
     @Column(name = "banned")
 private boolean banned = false;
 
-    // ---- NEW: detailed stats ----
- // analytics fields
+
 @Column(name = "total_questions")
 private Integer totalQuestions;
 

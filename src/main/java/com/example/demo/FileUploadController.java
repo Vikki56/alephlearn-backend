@@ -36,7 +36,6 @@ public class FileUploadController {
         Path target = uploadDir.resolve(fileName);
         Files.copy(file.getInputStream(), target);
 
-        // URL that browser can open later
         String fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/uploads/")
                 .path(fileName)

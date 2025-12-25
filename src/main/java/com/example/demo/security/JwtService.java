@@ -26,7 +26,6 @@ byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.expMillis = expMinutes * 60_000;
     }
 
-    /** Core generator that you already had */
     public String generate(String subject, Map<String, Object> claims) {
         long now = System.currentTimeMillis();
         return Jwts.builder()
@@ -45,12 +44,10 @@ byte[] keyBytes = Decoders.BASE64.decode(secret);
                 .parseClaimsJws(token);
     }
 
-    /** <-- This overload fixes your error in AuthService */
     public String generateToken(com.example.demo.user.User user) {
         Map<String, Object> claims = Map.of("role", user.getRole().name());
         return generate(user.getEmail(), claims);
     }
-    // 🔥 Extract user from Authorization header
 public com.example.demo.user.User extractUser(String authHeader, com.example.demo.user.UserRepository users) {
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
         throw new RuntimeException("Invalid token");

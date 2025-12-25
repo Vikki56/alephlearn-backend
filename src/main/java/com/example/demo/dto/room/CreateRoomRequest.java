@@ -8,5 +8,5 @@ public record CreateRoomRequest(
         @NotBlank @Size(max = 140) String slug,
         @NotBlank @Size(max = 120) String title,
         @Size(max = 200)           String tags,
-        @NotBlank                  String visibility // "PUBLIC" | "PRIVATE" | "TEMP"
+        @NotBlank                  String visibility 
 ) {}

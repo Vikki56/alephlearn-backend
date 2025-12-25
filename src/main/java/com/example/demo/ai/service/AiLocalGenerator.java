@@ -19,8 +19,7 @@ public class AiLocalGenerator {
         out.append("**Doubt:** ").append(title.isBlank() ? "(untitled)" : title).append("\n\n");
 
         if (!img.isBlank()) {
-            // UI usually renders either direct <img> or markdown image, so provide both.
-            out.append("🖼️ Attachment: ").append(img).append("\n\n");
+            out.append(" Attachment: ").append(img).append("\n\n");
             out.append("![](").append(img).append(")\n\n");
         }
 
@@ -33,7 +32,6 @@ public class AiLocalGenerator {
                 String t = ln == null ? "" : ln.trim();
                 if (t.isBlank()) continue;
 
-                // Keep bullet/numbered lines as-is, otherwise auto-number.
                 if (t.startsWith("-") || t.startsWith("*") || t.matches("^\\d+\\..*")) {
                     out.append(t).append("\n");
                 } else {

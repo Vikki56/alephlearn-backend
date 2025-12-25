@@ -2,17 +2,17 @@ package com.example.demo.dto;
 
 public class DashboardQuickStatsDto {
 
-    private long doubtsAsked;        // jitne doubts khud ne post kiye
-    private long doubtsSolved;       // answers accepted (solver = user)
-    private long answersGiven;       // total answers user ne diye
-    private long problemsAttempted;  // doubtsSolved + FAQ claims (ProfileSummary se)
+    private long doubtsAsked;    
+    private long doubtsSolved;      
+    private long answersGiven;      
+    private long problemsAttempted;  
 
-    private long quizzesCreated;     // host kiye hue quizzes
-    private long quizzesAttempted;   // jitni baar quiz diya
+    private long quizzesCreated;     
+    private long quizzesAttempted;  
 
-    private long totalPoints;        // gamified score
-    private long rankGlobal;         // 1,2,3,...
-    private long totalUsersGlobal;   // total users
+    private long totalPoints;       
+    private long rankGlobal;        
+    private long totalUsersGlobal;   
     private Double latestQuizScorePercent;
 
     public DashboardQuickStatsDto() {

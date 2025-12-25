@@ -28,10 +28,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-/**
- * Unified controller for Questions, Claims, and Answers.
- * Uses JWT-authenticated user (no X-User header needed).
- */
+
 @RestController
 @RequestMapping("/api/questions")
 @RequiredArgsConstructor
@@ -56,10 +53,10 @@ public class QuestionController {
         long claimedCount,
         String imageUrl,
         String groupName,
-        String privateRoom  // 👈 yaha se frontend ko private room ka name milega
+        String privateRoom  
 ) {
     public static QuestionDto of(Question q, long claimed) {
-        String roomName = "question/" + q.getId();  // 👈 private room naming convention
+        String roomName = "question/" + q.getId(); 
 
         return new QuestionDto(
                 q.getId(),
@@ -72,15 +69,15 @@ public class QuestionController {
                 q.getCreatedAt(),
                 claimed,
                 q.getImageUrl(),
-                q.getGroupName(),   // public group jisme question belong karta
-                roomName            // private doubt room name
+                q.getGroupName(),   
+                roomName            
         );
     }
 }
 
     public static record CreateQuestionReq(String title, String body, Integer maxClaimers, String room) {}
-    public static record ClaimReq(String user) {}         // kept for compatibility (ignored)
-    public static record AnswerReq(String text, String user) {} // kept for compatibility (ignored)
+    public static record ClaimReq(String user) {}       
+    public static record AnswerReq(String text, String user) {} 
 
 
     /* ========================
@@ -122,7 +119,7 @@ public ResponseEntity<QuestionDto> createWithImage(
         @RequestPart(name = "image", required = false) MultipartFile image
 ) throws IOException {
 
-    String imageUrl = null;  // 👈👈 ERROR FIX — variable yaha declare hoga
+    String imageUrl = null;  
 
     if (image != null && !image.isEmpty()) {
 
@@ -148,7 +145,7 @@ public ResponseEntity<QuestionDto> createWithImage(
                 .toUriString();
     }
 
-    // 👇 ab safe h, kyunki imageUrl declared hai
+
     var q = new Question();
     q.setTitle(title != null ? title.trim() : "");
     q.setBody(body != null ? body.trim() : "");
@@ -223,14 +220,14 @@ public ResponseEntity<Answer> getAnswer(@PathVariable Long answerId) {
     
         String who = (me != null && me.getEmail() != null) ? me.getEmail().toLowerCase() : "anon";
     
-        // Asker khud claim nahi kar sakta
+
         if (who.equalsIgnoreCase(q.getAskedBy())) {
             return ResponseEntity.status(409).body("You can’t claim your own question.");
         }
     
         Instant now = Instant.now();
     
-        // ❌ RULE: jisne ek baar claim kiya, wo dobara claim nahi karega
+
         if (claimRepo.existsByQuestionIdAndUserId(id, who)) {
             long active = claimRepo.countActiveByQuestionId(id, now);
     
@@ -242,18 +239,17 @@ public ResponseEntity<Answer> getAnswer(@PathVariable Long answerId) {
             return ResponseEntity.ok(QuestionDto.of(q, active));
         }
     
-        // Ab sirf ACTIVE claimers count karna hai
+
         long activeNow = claimRepo.countActiveByQuestionId(id, now);
         if (q.getMaxClaimers() != null && activeNow >= q.getMaxClaimers()) {
             return ResponseEntity.status(409).body("Claim slots are full.");
         }
-    
-        // ✅ New claim with 10 minute expiry
+
         Claim c = new Claim();
         c.setQuestionId(id);
         c.setUserId(who);
         c.setCreatedAt(now);
-        c.setExpiresAt(now.plus(Duration.ofMinutes(10)));  // 10 min window
+        c.setExpiresAt(now.plus(Duration.ofMinutes(10)));  
         claimRepo.save(c);
     
         long afterActive = claimRepo.countActiveByQuestionId(id, now);
@@ -285,7 +281,7 @@ public ResponseEntity<Answer> getAnswer(@PathVariable Long answerId) {
     
         String author = (me != null && me.getEmail() != null) ? me.getEmail() : "anon";
     
-        // ✅ yaha bhi wahi active-claimer rule
+
         Instant now = Instant.now();
         if (!claimRepo.isActiveClaimer(id, author, now)) {
             return ResponseEntity.status(403).body("Only active claimers can answer.");
@@ -330,64 +326,7 @@ public ResponseEntity<Answer> getAnswer(@PathVariable Long answerId) {
         return ResponseEntity.ok(a);
     }
 
-    /* ========================
-     * Post an answer with image (multipart)
-     * ======================== */
-    // @PostMapping(path = "/{id}/answers", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    // @Transactional
-    // public ResponseEntity<?> answerWithImage(@PathVariable Long id,
-    //                                          @AuthenticationPrincipal User me,
-    //                                          @RequestParam String text,
-    //                                          @RequestPart(name = "image", required = false) MultipartFile image)
-    //         throws IOException {
 
-    //     var q = questionRepo.findById(id).orElse(null);
-    //     if (q == null) return ResponseEntity.notFound().build();
-    //     if ("LOCKED".equalsIgnoreCase(q.getStatus()))
-    //         return ResponseEntity.status(409).body("Question locked.");
-
-    //     String author = (me != null && me.getEmail() != null) ? me.getEmail() : "anon";
-
-    //     if (!claimRepo.existsByQuestionIdAndUserId(id, author))
-    //         return ResponseEntity.status(403).body("Only claimers can answer.");
-
-    //     var body = (text != null ? text.trim() : "");
-    //     if (body.isBlank() && (image == null || image.isEmpty()))
-    //         return ResponseEntity.badRequest().body("Answer must include text or an image.");
-
-    //     String imageUrl = null;
-    //     if (image != null && !image.isEmpty()) {
-    //         Path uploadDir = Paths.get("uploads");
-    //         Files.createDirectories(uploadDir);
-
-    //         String ext = Optional.ofNullable(image.getOriginalFilename())
-    //                 .filter(f -> f.contains("."))
-    //                 .map(f -> f.substring(f.lastIndexOf('.')))
-    //                 .orElse("");
-
-    //         String filename = UUID.randomUUID() + ext;
-    //         Path target = uploadDir.resolve(filename);
-    //         try (InputStream in = image.getInputStream()) {
-    //             Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
-    //         }
-
-    //         imageUrl = ServletUriComponentsBuilder
-    //                 .fromCurrentContextPath()
-    //                 .path("/uploads/")
-    //                 .path(filename)
-    //                 .toUriString();
-    //     }
-
-    //     var a = new Answer();
-    //     a.setQuestionId(id);
-    //     a.setAuthor(author);
-    //     a.setBody(body);
-    //     a.setCreatedAt(Instant.now());
-    //     a.setImageUrl(imageUrl);
-    //     answerRepo.save(a);
-
-    //     return ResponseEntity.ok(a);
-    // }
 
     /* ========================
      * List answers
@@ -397,7 +336,6 @@ public ResponseEntity<Answer> getAnswer(@PathVariable Long answerId) {
         return answerRepo.findByQuestionIdOrderByCreatedAtAsc(id);
     }
 
-    // ✅ Add this method inside the QuestionController class
 /* ========================
  * Who am I? (claimer check)
  * ======================== */
@@ -429,7 +367,7 @@ public Map<String, Boolean> amIClaimer(@PathVariable Long id,
             return ResponseEntity.status(403).body("Only the asker can accept an answer.");
 
         q.setAcceptedAnswerId(answerId);
-        q.setStatus("RESOLVED");   // 🔥 VERY IMPORTANT
+        q.setStatus("RESOLVED");   
         questionRepo.save(q);
 
         return ResponseEntity.ok(Map.of("ok", true, "message", "Answer accepted! Question locked."));
@@ -500,11 +438,9 @@ public ResponseEntity<AnswerDto> getAcceptedAnswer(@PathVariable Long id) {
         String email = me.getEmail().toLowerCase();
         Instant now = Instant.now();
     
-        // 1) Questions jahan mai asker hoon
         List<Question> askedByMe =
                 questionRepo.findByAskedByOrderByCreatedAtDesc(email);
     
-        // 2) Questions jahan mera ACTIVE claim hai
         List<Long> myClaimedQIds =
                 claimRepo.findActiveQuestionIdsByUser(email, now);
     
@@ -512,7 +448,6 @@ public ResponseEntity<AnswerDto> getAcceptedAnswer(@PathVariable Long id) {
                 ? List.of()
                 : questionRepo.findAllById(myClaimedQIds);
     
-        // 3) Merge + unique set
         Map<Long, Question> merged = new LinkedHashMap<>();
         askedByMe.forEach(q -> merged.put(q.getId(), q));
         claimedByMe.forEach(q -> merged.put(q.getId(), q));

@@ -21,21 +21,21 @@ public class Room {
     private Long id;
 
     @Column(nullable = false, length = 200)
-    private String subject;          // e.g. "math", "cs"
+    private String subject;   
 
     @Column(nullable = false, length = 140)
-    private String slug;             // e.g. "java-programming"
+    private String slug;           
 
     @Column(nullable = false, length = 120)
-    private String title;            // e.g. "General Discussion"
+    private String title;        
 
     @Column(length = 200)
-    private String tags;             // comma-separated tags, optional
+    private String tags;             
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     @Builder.Default
-    private Visibility visibility = Visibility.PUBLIC;   // default value
+    private Visibility visibility = Visibility.PUBLIC;   
 
     @Builder.Default
     private Integer memberCount = 0;
@@ -57,7 +57,7 @@ public class Room {
     @Column(name = "specialization")
     private String specialization;
 
-    // ✅ Explicit setters (agar Lombok index / plugin issue ho)
+
     public void setEducationLevel(String educationLevel) {
         this.educationLevel = educationLevel;
     }
@@ -70,7 +70,6 @@ public class Room {
         this.specialization = specialization;
     }
 
-    // ✅ Nested enum
     public enum Visibility {
         PUBLIC, PRIVATE, TEMP
     }

@@ -1,10 +1,10 @@
 package com.example.demo;
 
 public class Reaction {
-    private String type;   // "reaction"
-    private String id;     // message id
-    private String emoji;  // 👍 ❤️ 😂 etc
-    private String user;   // who reacted
+    private String type;   
+    private String id;     
+    private String emoji;  
+    private String user;   
 
     public Reaction() {}
 

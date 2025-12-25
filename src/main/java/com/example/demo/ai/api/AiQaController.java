@@ -39,12 +39,11 @@ public class AiQaController {
         Answer acc = answerRepo.findById(q.getAcceptedAnswerId()).orElse(null);
         if (acc == null) return ResponseEntity.status(404).body("Accepted answer not found");
 
-        // ✅ simple local “AI” explanation (abhi ke liye)
         String explanation =
-                "✅ Accepted Answer:\n" +
+                " Accepted Answer:\n" +
                 (acc.getBody() == null ? "" : acc.getBody()) +
-                (acc.getImageUrl() != null ? ("\n\n🖼 Attachment: " + acc.getImageUrl()) : "") +
-                "\n\n🧠 AI Explanation (simplified):\n" +
+                (acc.getImageUrl() != null ? ("\n\n Attachment: " + acc.getImageUrl()) : "") +
+                "\n\n AI Explanation (simplified):\n" +
                 "Is solution ka core idea ye hai ki accepted answer me jo steps diye gaye hain, unko concept-wise break karke samjhaaya jaaye. "
                 + "Agar tum chaho to main ise aur beginner-friendly steps me convert kar dunga.";
 

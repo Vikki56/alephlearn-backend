@@ -18,21 +18,14 @@ public class ChatHandler extends TextWebSocketHandler {
     private final MessageRepository repo;
     private final ObjectMapper mapper = new ObjectMapper();
     private final RoomKickRepository kicks;
-
-    // NEW: room -> set of active user emails
-// private final ConcurrentHashMap<String, Set<String>> activeUsers = new ConcurrentHashMap<>();
-    // room -> sessions
     private final ConcurrentHashMap<String, Set<WebSocketSession>> rooms = new ConcurrentHashMap<>();
 
-    // room -> (messageId -> (emoji -> set of users))
 private final Map<String, Map<Long, Map<String, Set<String>>>> roomReactions = new ConcurrentHashMap<>();
 
-// --- presence helpers (room -> active count) --------------------
-// --- presence helpers: count unique users from sessions only -----------
 private void broadcastActiveCount(String room) {
     if (room == null || room.isBlank()) return;
 
-    // rooms = room -> Set<WebSocketSession>
+
     Set<WebSocketSession> sessions = rooms.getOrDefault(room, Collections.emptySet());
     Set<String> emails = new HashSet<>();
 
@@ -42,7 +35,7 @@ private void broadcastActiveCount(String room) {
 
         String email = String.valueOf(em).trim().toLowerCase();
         if (!email.isBlank()) {
-            emails.add(email); // same user in multiple tabs -> still 1
+            emails.add(email); 
         }
     }
 
@@ -56,9 +49,7 @@ private void broadcastActiveCount(String room) {
     broadcast(room, evt);
 }
 
-// ab alag se map rakhne ki zaroorat nahi, ye NO-OP rehne do (ya hata do)
-// private void markActive(String room, String email) { }
-// private void markInactive(String room, String email) { }
+
 
 private Map<Long, Map<String, Set<String>>> rxRoom(String room){
     return roomReactions.computeIfAbsent(room, r -> new ConcurrentHashMap<>());
@@ -116,10 +107,10 @@ if ("join".equals(type)) {
     final String newRoom = str(msg.get("room"));
     if (newRoom == null || newRoom.isBlank()) return;
 
-    // 1) Pehle session se lo (agar auth filter ne already daala ho)
+
     String email = str(session.getAttributes().get("userEmail"));
 
-    // 2) Agar null/blank ho to frame se lo
+  
     if (email == null || email.isBlank()) {
         String fromPayload = opt(str(msg.get("userEmail")), opt(str(msg.get("user")), "unknown"));
         email = (fromPayload != null ? fromPayload.trim().toLowerCase() : "unknown");
@@ -128,8 +119,8 @@ if ("join".equals(type)) {
     }
 
     session.getAttributes().put("userEmail", email);
-// 🚫 if kicked -> reject join
-String fullRoomKey = newRoom; // NOTE: client sends "subject/slug" already
+
+String fullRoomKey = newRoom; 
 if (isKickedInRoom(fullRoomKey, email)) {
     session.sendMessage(asText(Map.of(
         "type", "kicked",
@@ -149,21 +140,21 @@ if (isKickedInRoom(fullRoomKey, email)) {
                 rooms.remove(oldRoom);
             }
         }
-        // markInactive(oldRoom, email);
+
         broadcastActiveCount(oldRoom);
     }
 
-    // 2) Naye room me session + presence add karo
+ 
     rooms
         .computeIfAbsent(newRoom, k -> ConcurrentHashMap.newKeySet())
         .add(session);
     session.getAttributes().put("room", newRoom);
-    // markActive(newRoom, email);
 
-    // 3) Ack
+
+
     session.sendMessage(asText(Map.of("type", "join-ack", "room", newRoom)));
 
-    // 4) Reaction snapshot
+
     Map<Long, Map<String, Set<String>>> byMsg = roomReactions.getOrDefault(newRoom, Map.of());
     List<Map<String, Object>> items = new ArrayList<>();
     for (Map.Entry<Long, Map<String, Set<String>>> e1 : byMsg.entrySet()) {
@@ -186,12 +177,10 @@ if (isKickedInRoom(fullRoomKey, email)) {
     snap.put("items", items);
     session.sendMessage(asText(snap));
 
-    // 5) Naye room ka active-count
     broadcastActiveCount(newRoom);
     return;
 }
 
-        // From here on, we need a joined room
         final String room = (String) session.getAttributes().get("room");
         if (room == null || room.isBlank()) return;
 
@@ -247,11 +236,11 @@ if (isKickedInRoom(fullRoomKey, email)) {
         // ---------- PIN / UNPIN ----------
         if ("pin".equals(type)) {
             Long id = asLong(msg.get("id"));
-            Boolean pinned = asBoolean(msg.get("pinned")); // accepts true/false or "true"/"false"
+            Boolean pinned = asBoolean(msg.get("pinned"));
 
             if (id != null && id > 0 && pinned != null) {
                 repo.findById(id).ifPresent(m -> {
-                    // (Optional) add authorization here if only certain users can pin
+
                     m.setPinned(pinned);
                     repo.save(m);
 
@@ -270,34 +259,6 @@ if (isKickedInRoom(fullRoomKey, email)) {
             return;
         }
 
-        // ---------- REACTION ----------
-// if ("reaction".equals(type)) {
-//     // message id to react to
-//     Long id = asLong(msg.get("id"));
-//     String emoji = str(msg.get("emoji"));   // 👍 ❤️ 😂 etc.
-//     String user  = opt(str(msg.get("user")), "Anon");
-
-//     // sanity check: need an id and emoji
-//     if (id != null && id > 0 && emoji != null && !emoji.isBlank()) {
-//         // For now we just broadcast to everyone in the same room.
-//         // (Optional: persist in DB if you later add a Reaction entity/repo.)
-//         Map<String, Object> evt = new LinkedHashMap<>();
-//         evt.put("type",   "reaction");
-//         evt.put("id",     id);
-//         evt.put("emoji",  emoji);
-//         evt.put("user",   user);
-//         evt.put("room",   room);
-
-//         broadcast(room, evt);
-//     }
-//     return;
-// }
-// ---------- REACTION ----------
-// ---------- REACTION ----------
-// Client sends: {type:"reaction", id, emoji, user}
-// Server enforces: one reaction per user per message.
-// If user taps same emoji again -> toggle off (remove).
-// Server broadcasts events with {type:"reaction", id, emoji, user, added:true|false}
 if ("reaction".equals(type)) {
     Long id    = asLong(msg.get("id"));
     String emoji = str(msg.get("emoji"));
@@ -307,7 +268,7 @@ if ("reaction".equals(type)) {
     Map<Long, Map<String, Set<String>>> byMsg = rxRoom(room);
     Map<String, Set<String>> byEmoji = rxMsg(byMsg, id);
 
-    // 1) If user already has this emoji → toggle it off
+
     Set<String> cur = rxUsers(byEmoji, emoji);
     if (cur.contains(user)) {
         cur.remove(user);
@@ -321,7 +282,6 @@ if ("reaction".equals(type)) {
         return;
     }
 
-    // 2) Remove user from any other emoji on the same message
     for (Map.Entry<String, Set<String>> entry : byEmoji.entrySet()){
         String otherEmoji = entry.getKey();
         Set<String> users = entry.getValue();
@@ -336,7 +296,6 @@ if ("reaction".equals(type)) {
         }
     }
 
-    // 3) Add to the selected emoji
     cur.add(user);
     broadcast(room, Map.of(
         "type","reaction",
@@ -353,7 +312,7 @@ if ("reaction".equals(type)) {
         if ("message".equals(type)) {
             String email = str(session.getAttributes().get("userEmail"));
 if (isKickedInRoom(room, email)) {
-    // silently drop OR close session
+
     session.sendMessage(asText(Map.of(
         "type", "kicked",
         "room", room,
@@ -504,8 +463,7 @@ if (isKickedInRoom(room, email)) {
     private boolean isKickedInRoom(String room, String email) {
         if (room == null || email == null) return false;
     
-        // room format: subject/slug  -> slug = doubt-q-48
-        // extract questionId if slug matches
+
         String slug = room.contains("/") ? room.substring(room.indexOf("/") + 1) : room;
         if (!slug.startsWith("doubt-q-")) return false;
     

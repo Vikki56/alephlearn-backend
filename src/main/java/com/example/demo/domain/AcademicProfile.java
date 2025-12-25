@@ -9,7 +9,7 @@ import java.time.Instant;
 @Table(
     name = "academic_profiles",
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "user_id" }) // har user ka 1 hi profile
+        @UniqueConstraint(columnNames = { "user_id" }) 
     }
 )
 public class AcademicProfile {
@@ -18,20 +18,16 @@ public class AcademicProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // kaun sa user
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // 10th / 11th / 12th / Graduation / Masters / ...
     @Column(name = "education_level", nullable = false, length = 50)
     private String educationLevel;
 
-    // Engineering / Medical / Commerce / Arts / Science / ...
     @Column(name = "main_stream", length = 100)
     private String mainStream;
 
-    // CSE / Mechanical / MBBS / PCM / PCB / ...
     @Column(name = "specialization", length = 100)
     private String specialization;
 
@@ -47,8 +43,7 @@ public class AcademicProfile {
         createdAt = now;
         updatedAt = now;
     }
-    // ... baaki fields ke neeche
-    // 0–5 interests, comma-separated string
+
     @Column(name = "interests", length = 255)
     private String interests;
 
@@ -67,7 +62,6 @@ public class AcademicProfile {
         updatedAt = Instant.now();
     }
 
-    // ====== getters / setters ======
 
     public Long getId() {
         return id;

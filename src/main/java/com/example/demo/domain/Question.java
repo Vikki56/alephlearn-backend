@@ -20,24 +20,19 @@ public class Question {
 
 
 
-    /** OPEN, CLAIMED, LOCKED, SOLVED (you’ll mostly use OPEN/CLAIMED/LOCKED) */
     private String status = "OPEN";
 
-    /** how many students can claim to answer */
     private Integer maxClaimers = 3;
 
     private Long acceptedAnswerId;
 
     private Instant createdAt = Instant.now();
 
-    // ✅ NEW: public URL of the uploaded image
     private String imageUrl;
 
-    // --- getters & setters ---
 
-// add field
 @Column(length = 100)
-private String groupName;  // which chat/group this question belongs to
+private String groupName;  
 
 public String getGroupName() { return groupName; }
 public void setGroupName(String groupName) { this.groupName = groupName; }
@@ -66,7 +61,6 @@ public void setGroupName(String groupName) { this.groupName = groupName; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 
-    // ✅ Getter & setter for image
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }

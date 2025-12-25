@@ -21,7 +21,6 @@ public class AdminUserController {
     public ResponseEntity<?> createTeacher(@RequestBody CreateTeacherRequest req) {
         User t = adminUserService.createTeacher(req);
 
-        // ✅ Return safe payload (no passwordHash)
         return ResponseEntity.ok(Map.of(
                 "id", t.getId(),
                 "name", t.getName(),

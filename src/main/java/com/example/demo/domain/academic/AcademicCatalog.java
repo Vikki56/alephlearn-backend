@@ -4,28 +4,21 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-/**
- * Central place jahan hum education level + stream + specialization
- * ka dataset rakh rahe hain.
- *
- * Abhi ye sirf validation ke liye use ho raha hai.
- * Baad me yahi se API bana sakte hain jo dropdown options dega.
- */
 public final class AcademicCatalog {
 
     private AcademicCatalog() {
     }
 
-    // 🔹 Naye Sets (dropdown banane ke kaam aayenge)
+
     public static final Set<String> EDUCATION_LEVELS = new HashSet<>();
     public static final Set<String> MAIN_STREAMS     = new HashSet<>();
     public static final Set<String> SPECIALIZATIONS  = new HashSet<>();
 
-    // 🔹 VALID combos
+
     private static final Set<String> VALID_COMBINATIONS = new HashSet<>();
 
 
-    // ---------- STATIC BLOCK (saara data yahi hai) ----------
+
     static {
 
         // ---------- 11th ----------
@@ -162,7 +155,6 @@ public final class AcademicCatalog {
     }
 
 
-    // 🔹 Helper: add() method
     private static void add(String level, String stream, String specialization) {
         if (level != null && !level.isBlank()) EDUCATION_LEVELS.add(level);
         if (stream != null && !stream.isBlank()) MAIN_STREAMS.add(stream);
@@ -183,7 +175,6 @@ public final class AcademicCatalog {
     public static Set<String> getValidCombos() {
         return VALID_COMBINATIONS;
     }
-    // 🔹 Validate combination
     public static boolean isValidCombination(String level, String stream, String specialization) {
 
         if (norm(level).equals("10TH")) return true;
@@ -194,7 +185,6 @@ public final class AcademicCatalog {
 
         return VALID_COMBINATIONS.contains(comboKey(level, stream, specialization));
     }
-    // 🔹 Saare valid combo keys expose karne ke liye (read-only copy)
 public static Set<String> getValidCombinationKeys() {
     return new HashSet<>(VALID_COMBINATIONS);
 }

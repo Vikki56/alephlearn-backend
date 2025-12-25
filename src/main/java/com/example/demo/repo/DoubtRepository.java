@@ -74,7 +74,7 @@ Page<Doubt> findByAskerIdAndStatusAndAcceptedAnswerIsNotNull(
         DoubtStatus status,
         Pageable pageable
 );
-// ✅ New: global resolved doubts library (any user can browse)
+
 Page<Doubt> findByStatusAndAcceptedAnswerIsNotNull(DoubtStatus status, Pageable pageable);
 
 

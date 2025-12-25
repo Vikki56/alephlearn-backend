@@ -18,12 +18,10 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
                         "http://127.0.0.1:*",
                         "null",
     
-                        // PROD domains
+
                         "https://alephlearn.com",
                         "https://www.alephlearn.com",
                         "https://app.alephlearn.com",
-    
-                        // Cloudflare Pages default
                         "https://*.pages.dev"
                 );
     

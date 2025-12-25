@@ -8,7 +8,7 @@ public class LatestAttemptDto {
     private Integer correctCount;
     private Long timeTakenMillis;
     private String submittedAt;
-    private Integer rank;   // optional
+    private Integer rank;   
 
     // getters / setters
     public Long getQuizId() { return quizId; }

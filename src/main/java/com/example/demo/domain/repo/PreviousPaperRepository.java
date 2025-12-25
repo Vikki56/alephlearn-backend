@@ -32,10 +32,8 @@ public interface PreviousPaperRepository extends JpaRepository<PreviousPaper, Lo
         """)
     List<PaperContributorDto> findTopContributors();
 
-    // Filter by exact stream if needed
     List<PreviousPaper> findByStreamKeyIgnoreCase(String streamKey, Sort sort);
 
-    // ⭐ NEW: duplicate check including streamKey
     boolean existsByCollegeNameIgnoreCaseAndSubjectNameIgnoreCaseAndExamYearAndExamTypeIgnoreCaseAndStreamKeyIgnoreCase(
             String collegeName,
             String subjectName,

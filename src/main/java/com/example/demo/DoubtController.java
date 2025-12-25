@@ -112,7 +112,6 @@ public class DoubtController {
                                   @RequestParam(defaultValue = "LATEST") String sort,
                                   @RequestParam(required = false) Long userId) {
 
-        // 👉 Sorting same jaisa pehle tha (approx)
         Sort sortSpec;
         switch (sort.toUpperCase()) {
             case "MOST_LIKED" -> sortSpec = Sort.by(Sort.Direction.DESC, "likeCount");
@@ -121,7 +120,6 @@ public class DoubtController {
         }
         Pageable pageable = PageRequest.of(page, size, sortSpec);
 
-        // 🔥 Agar userId diya hai aur uska academic profile hai
         if (userId != null) {
             User u = userRepository.findById(userId).orElse(null);
             if (u != null) {
@@ -157,7 +155,6 @@ public class DoubtController {
             }
         }
 
-        // 🟡 Fallback: purana global behaviour (agar userId nahi mila / profile nahi mila)
         return doubtService.listDoubts(subject, status, sort, page, size);
     }
 

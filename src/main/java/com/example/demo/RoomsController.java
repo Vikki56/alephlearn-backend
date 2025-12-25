@@ -98,21 +98,20 @@ if (kicks.existsByQuestionIdAndKickedUserEmailIgnoreCase(questionId, email)) {
             return ResponseEntity.badRequest().body("You already claimed this question");
         }
 
-        // ✅ max claimers safe (default 3)
+
         Integer max = (q.getMaxClaimers() == null) ? 3 : q.getMaxClaimers();
         long activeClaims = claims.countActiveByQuestionId(questionId, Instant.now());
         if (activeClaims >= max) {
             return ResponseEntity.badRequest().body("Claim slots full");
         }
 
-        // ✅ create claim (15 min expiry)
         Claim c = new Claim();
         c.setQuestionId(questionId);
         c.setUserId(email);
-        c.setExpiresAt(Instant.now().plusSeconds(15 * 60)); // 15 min
+        c.setExpiresAt(Instant.now().plusSeconds(15 * 60)); 
         claims.save(c);
 
-        // 🔔 notify asker (REALTIME)
+
         String askerEmail = (q.getAskedBy() == null) ? "" : q.getAskedBy().trim();
         String display = (user.getName() == null || user.getName().isBlank()) ? email : user.getName();
 
@@ -127,7 +126,7 @@ if (kicks.existsByQuestionIdAndKickedUserEmailIgnoreCase(questionId, email)) {
                 );
             });
         }
-// 1114145446534758787578
+
         return ResponseEntity.ok(java.util.Map.of(
             "status", "CLAIMED",
             "questionId", questionId
@@ -151,14 +150,14 @@ if (kicks.existsByQuestionIdAndKickedUserEmailIgnoreCase(questionId, email)) {
             return ResponseEntity.badRequest().body("Invalid user email");
         }
     
-        // lock claim expiry
+
         claims.findFirstByQuestionIdAndUserId(questionId, email)
                 .ifPresent(c -> {
                     c.setExpiresAt(null);
                     claims.save(c);
                 });
     
-        // 🔔 notify asker on JOIN too (REALTIME)
+
         Question q = questions.findById(questionId).orElse(null);
         if (q != null) {
             String askerEmail = (q.getAskedBy() == null) ? "" : q.getAskedBy().trim();
@@ -197,19 +196,18 @@ if (kicks.existsByQuestionIdAndKickedUserEmailIgnoreCase(questionId, email)) {
         String query = (q == null) ? "" : q.trim();
         String streamKey = StreamKeyUtil.forProfile(p, subject);
 
-        // ✅ current user email
         String myEmail = "";
         if (current != null && current.getEmail() != null) {
             myEmail = current.getEmail().trim().toLowerCase();
         }
 
-        // Auto create General Chat + Quizzes
+
         ensureDefaultRooms(streamKey, p);
 
-        // Public rooms
+
         List<Room> base = rooms.search(streamKey, Room.Visibility.PUBLIC, query);
 
-        // Private doubt rooms: only for asker / active claimer
+ 
         List<Room> doubtRooms = createOrLoadDoubtRoomsForStream(streamKey, query, myEmail);
 
         base.addAll(doubtRooms);

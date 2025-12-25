@@ -16,14 +16,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.example.demo.repository.AcademicProfileRepository;
-// import com.example.demo.domain.dto.quiz.RealtimeStatusResponse;
-// import com.example.demo.repo.QuizAttemptRepository;
 
-// import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-// import org.springframework.web.bind.annotation.PathVariable;
-// import org.springframework.web.bind.annotation.PostMapping;
+
 import com.example.demo.domain.entity.QuizQuestion;
 import com.example.demo.domain.dto.quiz.QuizQuestionDto;
 
@@ -31,14 +27,13 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-// import java.util.stream.Collectors;
+
 import com.example.demo.domain.dto.quiz.AttemptHistoryItem;
-// import com.example.demo.domain.dto.quiz.LeaderboardEntryDto;
-// ...
+
+
 import java.util.HashMap;
 import java.util.Map;
-// import java.util.ArrayList;
-// (ye imports upar add kar lena agar missing hon)
+
 
 
 @Service
@@ -84,10 +79,10 @@ if (p != null) {
     quiz.setMainStream(p.getMainStream());
     quiz.setSpecialization(p.getSpecialization());
 }
-        // 👉 Map questions from DTO → entity
+    
         if (request.getQuestions() != null && !request.getQuestions().isEmpty()) {
             List<QuizQuestion> questionEntities = new java.util.ArrayList<>();
-            int index = 1; // 1-based question numbering
+            int index = 1; 
     
             for (QuizQuestionDto dto : request.getQuestions()) {
                 QuizQuestion q = new QuizQuestion();
@@ -115,7 +110,7 @@ if (p != null) {
             quiz.setQuestions(questionEntities);
         }
     
-        // parent + children save ho jayenge (cascade ALL)
+
         Quiz saved = quizRepository.save(quiz);
     
         String link = baseUrl + "/quizzes.html?code=" + saved.getJoinCode();
@@ -163,7 +158,7 @@ if (p != null) {
             }
         }
     
-        // fallback: show all if no profile
+
         return quizRepository.findByIsPublicTrueOrderByCreatedAtDesc().stream()
                 .map(q -> {
                     boolean isHost = currentUser != null &&
@@ -187,7 +182,7 @@ if (p != null) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new RuntimeException("Quiz not found"));
     
-        // Only host
+
         if (!quiz.getCreatedBy().getId().equals(currentUser.getId())) {
             throw new RuntimeException("Only host can unban participants");
         }
@@ -195,10 +190,10 @@ if (p != null) {
         quizAttemptRepository
         .findByQuizIdAndUserIdAndRealtimeTrue(quizId, userId)
         .ifPresent(a -> {
-            // already approved ho chuka hai toh dobara count mat badhao
+
             if (!a.isApproved()) {
                 a.setApproved(true);
-                a.setBanned(false);      // safety
+                a.setBanned(false);    
                 if (a.getJoinedAt() == null) {
                     a.setJoinedAt(Instant.now());
                 }
@@ -232,20 +227,20 @@ public List<AttemptHistoryItem> getAttemptHistory(User user) {
                     null,
                     null,
                     0,
-                    null   // bestRank
+                    null  
             );
         }
 
         item.setTotalAttempts(item.getTotalAttempts() + 1);
 
-        // best score
+
         if (a.getScore() != null) {
             if (item.getBestScore() == null || a.getScore() > item.getBestScore()) {
                 item.setBestScore(a.getScore());
             }
         }
 
-        // fastest time
+  
         if (a.getTimeTakenMillis() != null) {
             if (item.getFastestMs() == null || a.getTimeTakenMillis() < item.getFastestMs()) {
                 item.setFastestMs(a.getTimeTakenMillis());
@@ -255,15 +250,15 @@ public List<AttemptHistoryItem> getAttemptHistory(User user) {
         map.put(quizId, item);
     }
 
-    // 🔥 Now compute BEST RANK for each quiz
+
     for (AttemptHistoryItem item : map.values()) {
         List<LeaderboardEntryDto> leaderboard =
-                getLeaderboard(item.getQuizId()); // already sorted by rank
+                getLeaderboard(item.getQuizId()); 
 
         Integer rank = null;
 
         for (LeaderboardEntryDto e : leaderboard) {
-            // username match: display name OR email ka prefix
+
             if (e.getUsername().equalsIgnoreCase(user.getName()) ||
                 (user.getEmail() != null &&
                  e.getUsername().equalsIgnoreCase(user.getEmail().split("@")[0]))) {
@@ -283,18 +278,18 @@ public List<RealtimeParticipantDto> getRealtimeParticipants(Long quizId, User cu
     Quiz quiz = quizRepository.findById(quizId)
             .orElseThrow(() -> new RuntimeException("Quiz not found"));
 
-    // agar login hi nahi hai
+
     if (currentUser == null) {
         return List.of();
     }
 
-    // sirf host allowed
+
     Long hostId = quiz.getCreatedBy().getId();
     if (!hostId.equals(currentUser.getId())) {
-        return List.of();   // host nahi -> empty list, koi 500 nahi
+        return List.of();   
     }
 
-    // ✅ yaha sahi repo method use karo
+
     List<QuizAttempt> attempts =
     quizAttemptRepository
         .findByQuizIdAndRealtimeTrueAndApprovedTrueAndBannedFalse(quizId);
@@ -305,7 +300,7 @@ public List<RealtimeParticipantDto> getRealtimeParticipants(Long quizId, User cu
         if (a == null || a.getUser() == null) continue;
 
         User u = a.getUser();
-        boolean removable = !u.getId().equals(hostId); // host khud ko remove nahi kar sakta
+        boolean removable = !u.getId().equals(hostId); 
 
         list.add(new RealtimeParticipantDto(
                 u.getId(),
@@ -347,10 +342,10 @@ public void approveParticipant(Long quizId, Long userId, User currentUser) {
     quizAttemptRepository
             .findByQuizIdAndUserIdAndRealtimeTrue(quizId, userId)
             .ifPresent(a -> {
-                // already approved ho chuka to dobara count mat badhao
+
                 if (!a.isApproved()) {
                     a.setApproved(true);
-                    a.setBanned(false);      // safety
+                    a.setBanned(false);    
                     if (a.getJoinedAt() == null) {
                         a.setJoinedAt(Instant.now());
                     }
@@ -387,14 +382,14 @@ public void removeRealtimeParticipant(Long quizId, Long participantUserId, User 
 
     Long hostId = quiz.getCreatedBy().getId();
     if (!hostId.equals(currentUser.getId())) {
-        // host nahi → ignore
+
         return;
     }
 
-    // Host khud ko remove nahi kar sakta
+
     if (hostId.equals(participantUserId)) return;
 
-    // sirf realtime attempt ke saath kaam karenge
+
     User dummy = new User();
     dummy.setId(participantUserId);
 
@@ -403,12 +398,12 @@ public void removeRealtimeParticipant(Long quizId, Long participantUserId, User 
             .ifPresent(attempt -> {
                 boolean wasApproved = attempt.isApproved();
 
-                // 👉 BAN karo, realtime flag ko mat chhedo
+
                 attempt.setBanned(true);
                 attempt.setApproved(false);
                 quizAttemptRepository.save(attempt);
 
-                // joinedCount sirf approved users ke liye ghatao
+
                 if (wasApproved) {
                     quiz.setJoinedCount(Math.max(0, quiz.getJoinedCount() - 1));
                     quizRepository.save(quiz);
@@ -430,7 +425,7 @@ public void removeRealtimeParticipant(Long quizId, Long participantUserId, User 
         int wrongCount = 0;
         int skippedCount = 0;
     
-        // ---- score + analytics calculate ----
+
         for (int i = 0; i < totalQuestions; i++) {
             QuizQuestion q = questions.get(i);
     
@@ -466,16 +461,13 @@ public void removeRealtimeParticipant(Long quizId, Long participantUserId, User 
         attempt.setTimeTakenMillis(req.getTimeTakenMillis());
         attempt.setSubmittedAt(Instant.now());
     
-        // 🔹 IMPORTANT: yahi 4 fields set kar rahe hain
         attempt.setTotalQuestions(totalQuestions);
         attempt.setCorrectCount(correctCount);
         attempt.setWrongCount(wrongCount);
         attempt.setSkippedCount(skippedCount);
     
-        // save attempt
         quizAttemptRepository.save(attempt);
     
-        // non-realtime ke liye attempts counter
         if (!quiz.isRealtime()) {
             quiz.setTotalAttempts(quiz.getTotalAttempts() + 1);
         }
@@ -493,7 +485,6 @@ public void removeRealtimeParticipant(Long quizId, Long participantUserId, User 
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new RuntimeException("Quiz not found"));
     
-        // 🔒 Jab tak quiz END nahi hota, leaderboard empty rakho
         if (quiz.getStatus() != QuizStatus.ENDED) {
             return List.of();
         }
@@ -506,7 +497,6 @@ public void removeRealtimeParticipant(Long quizId, Long participantUserId, User 
     
         for (QuizAttempt a : attempts) {
     
-            // ❌ jinke score set hi nahi hua, unko leaderboard me mat dikhhao
             if (a.getScore() == null) {
                 continue;
             }
@@ -541,7 +531,6 @@ public void removeRealtimeParticipant(Long quizId, Long participantUserId, User 
         }
     
         return quizRepository.findByCreatedByOrderByCreatedAtDesc(currentUser).stream()
-                // ❌ ENDED wale hide karo (chahe public ho ya private)
                 .filter(q -> q.getStatus() != QuizStatus.ENDED)
                 .map(q -> {
                     boolean isHost = true;
@@ -581,22 +570,18 @@ public Quiz getById(Long id) {
             throw new RuntimeException("Not a realtime quiz");
         }
     
-        // Quiz already khatam
         if (quiz.getStatus() == QuizStatus.ENDED || quiz.getStatus() == QuizStatus.COMPLETED) {
             return JoinMode.ENDED;
         }
     
-        // Sirf realtime attempt fetch karo (jo hum use kar rahe hain)
         QuizAttempt existing = quizAttemptRepository
                 .findByQuizAndUserAndRealtime(quiz, user, true)
                 .orElse(null);
     
-        // Agar attempt mila aur banned hai -> seedha BANNED
         if (existing != null && existing.isBanned()) {
             return JoinMode.BANNED;
         }
     
-        // Pehli baar aa raha hai -> naya attempt banao (pending by default)
         if (existing == null) {
             existing = new QuizAttempt();
             existing.setQuiz(quiz);
@@ -612,7 +597,6 @@ public Quiz getById(Long id) {
     
         // ---------- WAITING STATE ----------
         if (waiting) {
-            // ✅ Sirf pehli baar approve hone par hi joinedCount++
             if (!existing.isApproved()) {
                 existing.setApproved(true);
                 if (existing.getJoinedAt() == null) {
@@ -624,22 +608,19 @@ public Quiz getById(Long id) {
                 quizAttemptRepository.save(existing);
             }
     
-            // Already approved ho ya abhi approve hua ho, dono case me WAITING return
             return JoinMode.WAITING;
         }
     
         // ---------- LIVE STATE ----------
         if (quiz.getStatus() == QuizStatus.LIVE) {
-            // 👇 Pehle se approved participant hai -> kuch mat chhedo
             if (existing.isApproved()) {
-                return JoinMode.WAITING; // front-end isko "already inside" samajh sakta hai
+                return JoinMode.WAITING; 
             }
     
-            // Abhi tak host ne approve nahi kiya -> pending hi rakho
+
             return JoinMode.PENDING;
         }
-    
-        // Fallback (kabhi-kabhi extra states ho sakte hain)
+
         return JoinMode.PENDING;
     }
 
@@ -651,7 +632,7 @@ public Quiz getById(Long id) {
             throw new RuntimeException("Not a realtime quiz");
         }
     
-        // find existing realtime attempt
+
         QuizAttempt existing = quizAttemptRepository
                 .findByQuizAndUserAndRealtime(quiz, user, true)
                 .orElse(null);
@@ -661,7 +642,7 @@ public Quiz getById(Long id) {
                 
                     quizAttemptRepository.delete(existing);
                 
-                    if (wasApproved) {   // ✅ sirf approved users ke liye count ghatao
+                    if (wasApproved) {   
                         long current = quiz.getJoinedCount();
                         if (current > 0) {
                             quiz.setJoinedCount(current - 1);
@@ -669,10 +650,10 @@ public Quiz getById(Long id) {
                         quizRepository.save(quiz);
                     }
                 }
-        // agar existing hi nahi, to silently ignore
+  
     }
 
-    // ------- start realtime quiz (by host) ---------
+
 
     public void startRealtimeQuiz(Long quizId, User currentUser) {
         Quiz quiz = quizRepository.findById(quizId)
@@ -703,7 +684,6 @@ public Quiz getById(Long id) {
     
         Instant now = Instant.now();
     
-        // 1) WAITING realtime quiz auto-expire after 4 min (agar host ne start nahi kiya)
         if (quiz.isRealtime()
                 && quiz.getStatus() == QuizStatus.WAITING
                 && quiz.getCreatedAt() != null) {
@@ -716,7 +696,6 @@ public Quiz getById(Long id) {
             }
         }
     
-        // 2) LIVE quiz + endTime cross ho gaya -> COMPLETED
         if (quiz.getStatus() == QuizStatus.LIVE && quiz.getEndTime() != null) {
             if (now.isAfter(quiz.getEndTime())) {
                 quiz.setStatus(QuizStatus.COMPLETED);
@@ -740,7 +719,6 @@ public Quiz getById(Long id) {
         );
     }
 
-    // ------- submit quiz (public or realtime) ---------
 
     public void submitQuiz(Long quizId, User user, boolean isRealtime, Integer score) {
         Quiz quiz = quizRepository.findById(quizId)
@@ -753,7 +731,7 @@ public Quiz getById(Long id) {
                     a.setQuiz(quiz);
                     a.setUser(user);
                     a.setRealtime(isRealtime);
-                    a.setJoinedAt(Instant.now());   // first time join
+                    a.setJoinedAt(Instant.now());  
                     return a;
                 });
     
@@ -763,17 +741,14 @@ public Quiz getById(Long id) {
         attempt.setSubmittedAt(now);
         attempt.setCompleted(true);
     
-        // ⏱️ yahi se timeTakenMillis calculate
         if (attempt.getJoinedAt() != null) {
             long ms = java.time.Duration.between(attempt.getJoinedAt(), now).toMillis();
             attempt.setTimeTakenMillis(ms);
         }
     
-        // 👉 yahi pe wo analytics wali lines daalo
         if (quiz.getQuestions() != null) {
             attempt.setTotalQuestions(quiz.getQuestions().size());
         }
-        // correct/wrong/skip ka breakdown abhi nahi, isliye null rehne do
     
         quizAttemptRepository.save(attempt);
     
@@ -790,20 +765,16 @@ public Quiz getById(Long id) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new RuntimeException("Quiz not found"));
     
-        // ensure only creator can end
         if (quiz.getCreatedBy() != null &&
             !Objects.equals(quiz.getCreatedBy().getId(), currentUser.getId())) {
             throw new RuntimeException("Only quiz creator can end the quiz");
         }
     
-        // mark ended
         quiz.setStatus(QuizStatus.ENDED);
         quiz.setEndTime(Instant.now());
     
-        // hide it from users (so list me na dikhai de)
         quiz.setPublic(false);
     
-        // only durationSeconds can be null (totalAttempts & joinedCount are primitives)
         if (quiz.getDurationSeconds() == null) {
             quiz.setDurationSeconds(0);
         }

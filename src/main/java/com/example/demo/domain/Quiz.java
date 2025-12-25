@@ -50,12 +50,11 @@ public class Quiz {
     private long totalAttempts = 0L;
 
     @Column(nullable = false)
-    private long joinedCount = 0L;   // for realtime "waiting room"
+    private long joinedCount = 0L;   
 
     private Instant startTime;
     private Instant endTime;
 
-    // -------- Academic Stream Fields --------
 @Column(name = "education_level")
 private String educationLevel;
 
@@ -65,7 +64,6 @@ private String mainStream;
 @Column(name = "specialization")
 private String specialization;
 
-    // ------------ relations ------------
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_id", nullable = false)
@@ -90,10 +88,6 @@ public void setQuestions(List<QuizQuestion> questions) {
 }
 
 
-    // ------------ questions relation ------------
-
-
-    // ------------ lifecycle hooks ------------
 
     @PrePersist
     protected void onCreate() {

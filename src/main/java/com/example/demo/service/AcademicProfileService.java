@@ -13,14 +13,13 @@ import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 import com.example.demo.domain.academic.AcademicCatalog;
-// import com.example.demo.domain.AcademicCatalog;
 import com.example.demo.domain.dto.profile.AcademicOptionsDto;
 
 @Service
 public class AcademicProfileService {
 
     private final AcademicProfileRepository profileRepository;
-    private final UserRepository userRepository; // (optional, future use)
+    private final UserRepository userRepository; 
 
     public AcademicProfileService(AcademicProfileRepository profileRepository,
                                   UserRepository userRepository) {
@@ -65,7 +64,7 @@ public class AcademicProfileService {
                 new ArrayList<>(AcademicCatalog.SPECIALIZATIONS)
         );
     
-        // 🔥 yeh naya part hai
+
         dto.setValidCombos(
                 new ArrayList<>(AcademicCatalog.getValidCombinationKeys())
         );
@@ -76,12 +75,12 @@ public class AcademicProfileService {
     public AcademicProfileDto saveMyProfile(AcademicProfileDto dto) {
         User user = getCurrentUser();
     
-        // 🔒 STEP 1 — Lock: agar profile already hai → change allowed nahi
+ 
         if (profileRepository.existsByUser(user)) {
             throw new IllegalStateException("Academic profile already set and cannot be changed.");
         }
     
-        // 🔍 STEP 2 — Valid combination check
+
         boolean ok = AcademicCatalog.isValidCombination(
                 dto.getEducationLevel(),
                 dto.getMainStream(),
@@ -97,7 +96,6 @@ public class AcademicProfileService {
             );
         }
     
-        // 🆕 STEP 3 — Always create new profile (no update allowed)
         AcademicProfile profile = new AcademicProfile();
         profile.setUser(user);
         profile.setEducationLevel(dto.getEducationLevel());

@@ -8,14 +8,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebCorsConfig implements WebMvcConfigurer {
   @Override 
   public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("/**")  // ✅ applies to all REST endpoints
+    registry.addMapping("/**")  
         .allowedOriginPatterns(
             "http://localhost:*", 
             "http://127.0.0.1:*", 
-            "null")              // 'null' allows local file:// origins if ever needed
+            "null")             
         .allowedMethods("GET","POST","PATCH","DELETE","OPTIONS","HEAD")
         .allowedHeaders("*")
-        .allowCredentials(true) // ✅ needed if you send cookies or Authorization headers
+        .allowCredentials(true) 
         .maxAge(3600);
   }
 }

@@ -32,8 +32,7 @@ public class NotificationService {
 
         Notification saved = notificationRepository.save(n);
 
-        // send to /user/{receiverId}/queue/notifications
-// For user-specific topic
+
 String destination = "/topic/notifications.user-" + receiver.getId();
 
 java.util.Map<String, Object> payload = new java.util.LinkedHashMap<>();

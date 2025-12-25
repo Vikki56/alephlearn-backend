@@ -1,11 +1,9 @@
 package com.example.demo.entity;
 
-// import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-// import jakarta.persistence.Column;
 
 
 @Entity
@@ -14,19 +12,14 @@ public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // @Column(length = 128)
+
     private String subject;
-    // @Column(length = 128)
     private String slug;
-    // @Column(length = 5000)
     private String text;
 
     private long ts;
-    // @Column(length = 128)
     private String clientId;
-    // @Column(length = 128)
     private String userName;
-    // @Column(length = 191)
     private String userEmail;
 
     private boolean deleted;

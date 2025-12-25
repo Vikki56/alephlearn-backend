@@ -8,7 +8,7 @@ public record QuestionDto(
         String title,
         String body,
         String askedBy,
-        String status,           // e.g., "OPEN", "CLAIMED", "RESOLVED"
+        String status,          
         Integer maxClaimers,
         Long acceptedAnswerId,
         Instant createdAt,

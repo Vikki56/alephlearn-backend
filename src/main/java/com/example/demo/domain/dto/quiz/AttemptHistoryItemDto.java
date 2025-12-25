@@ -8,7 +8,7 @@ public class AttemptHistoryItemDto {
 
     private Integer score;
     private Long timeTakenMillis;
-    private String submittedAt; // ISO string
+    private String submittedAt; 
 
     public Long getAttemptId() {
         return attemptId;

@@ -4,12 +4,12 @@ import java.util.List;
 
 public class DashboardSummaryDto {
 
-    private ProfileSummaryDto profile;              // already existing DTO
+    private ProfileSummaryDto profile;              
 
-    private DashboardQuickStatsDto quickStats;      // top 4 cards
-    private DashboardActivityDto activity;          // streak + week/month stats
+    private DashboardQuickStatsDto quickStats;     
+    private DashboardActivityDto activity;         
 
-    private long activeChats;                       // TODO: wire with chat WS later
+    private long activeChats;                      
 
     private List<DashboardTrendingItemDto> trending;
     private List<DashboardRecentItemDto> recent;

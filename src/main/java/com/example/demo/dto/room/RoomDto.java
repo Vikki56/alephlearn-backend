@@ -5,11 +5,11 @@ import java.time.Instant;
 
 public record RoomDto(
         Long id,
-        String subject,        // e.g., "math", "cs"
-        String slug,           // e.g., "general", "java-programming"
-        String title,          // human friendly
-        String tags,           // comma-separated for now
-        String visibility,     // PUBLIC / PRIVATE / TEMP (string to decouple frontend from enum)
+        String subject,      
+        String slug,           
+        String title,       
+        String tags,          
+        String visibility,     
         Integer memberCount,
         Instant createdAt,
         Instant lastActivity

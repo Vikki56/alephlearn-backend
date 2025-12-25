@@ -18,7 +18,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chatHandler, "/ws/chat")
-                // Allow any localhost/127.0.0.1 port in dev
+          
                 .setAllowedOriginPatterns(
                     "http://localhost:*",
                     "http://127.0.0.1:*",
@@ -28,6 +28,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
                     "https://app.alephlearn.com",
                     "https://*.pages.dev"
             );
-                // no credentials on WS, patterns are fine
+               
     }
 }

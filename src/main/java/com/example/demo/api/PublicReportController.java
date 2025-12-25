@@ -17,13 +17,11 @@ public class PublicReportController {
     this.reportRepo = reportRepo;
   }
 
-  // Landing page se (no-login) bug report
   @PostMapping("/bug")
   public ResponseEntity<?> reportBug(@RequestBody BugReportRequest req) {
 
     Report r = new Report();
 
-    // ✅ if you added APP in enum
     r.setTargetType(ReportTargetType.APP);
     r.setTargetId(0L);
 

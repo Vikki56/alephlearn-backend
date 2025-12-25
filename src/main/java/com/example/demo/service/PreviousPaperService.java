@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@Transactional(readOnly = true)  // default: all methods read-only
+@Transactional(readOnly = true)  
 public class PreviousPaperService {
 
     private static final Path PAPERS_ROOT =
@@ -67,7 +67,6 @@ public class PreviousPaperService {
         return u;
     }
 
-    // --- STREAM KEY HELPERS ---
 
     private String buildStreamKeyFromProfile(AcademicProfile profile) {
         if (profile == null) return "global";
@@ -80,7 +79,6 @@ public class PreviousPaperService {
                 ? profile.getSpecialization().toLowerCase().replaceAll("[^a-z0-9]", "")
                 : "general";
 
-        // e.g. btech_cse, class12_pcm etc.
         return level + "_" + spec;
     }
 
@@ -149,10 +147,8 @@ public class PreviousPaperService {
         String trimmedSubject = subjectName.trim();
         String trimmedType = examType.trim();
 
-        // ⭐ streamKey from academic profile
         String streamKey = resolveStreamKeyForUser(currentUser);
 
-        // ⭐ duplicate check (same college+subject+year+type+stream)
         boolean exists = paperRepository
                 .existsByCollegeNameIgnoreCaseAndSubjectNameIgnoreCaseAndExamYearAndExamTypeIgnoreCaseAndStreamKeyIgnoreCase(
                         trimmedCollege,
@@ -183,7 +179,7 @@ public class PreviousPaperService {
         paper.setSubjectName(trimmedSubject);
         paper.setExamYear(examYear);
         paper.setExamType(trimmedType);
-        paper.setStreamKey(streamKey);   // ⭐ important
+        paper.setStreamKey(streamKey);   
         paper.setStudentYear(studentYear);
         paper.setOriginalFileName(originalName);
         paper.setStoredFileName(randomName);
@@ -232,7 +228,6 @@ public class PreviousPaperService {
         Optional<PaperLike> existing = paperLikeRepository.findByPaperAndUser(paper, currentUser);
 
         if (existing.isPresent()) {
-            // already liked -> unlike
             paperLikeRepository.delete(existing.get());
         } else {
             PaperLike like = new PaperLike();
@@ -269,18 +264,6 @@ public class PreviousPaperService {
         return paperRepository.findTopContributors();
     }
 
-    // ---------- LIST + SCOPE + SEARCH + SORT ----------
-
-    /**
-     * scope:
-     *  - "my"     => user stream + global  (default)
-     *  - "stream" => only user stream
-     *  - "all"    => only global
-     *
-     * sort:
-     *  - "popular" => downloads desc
-     *  - anything else => recent (createdAt desc)
-     */
     public List<PreviousPaperDto> listFilteredPapers(String search,
                                                      String sort,
                                                      String scope,
@@ -290,10 +273,8 @@ public class PreviousPaperService {
                 ? Sort.by(Sort.Direction.DESC, "downloads")
                 : Sort.by(Sort.Direction.DESC, "createdAt");
 
-        // sab papers pehle sort ke saath
         List<PreviousPaper> all = paperRepository.findAll(sortObj);
 
-        // effective streamKey
         String effectiveStreamKey = streamKey;
         if (effectiveStreamKey == null || effectiveStreamKey.isBlank()) {
             User currentUser = getCurrentUserOrNull();
@@ -322,12 +303,10 @@ public class PreviousPaperService {
                     .toList();
         
         } else if ("all".equalsIgnoreCase(scope)) {
-            // 🔥 ALL Papers => sab papers (global + sabhi streams)
-            // yaha koi streamKey filter nahi, directly 'all' list use karo
+
             base = all;
         
         } else {
-            // "my" (default) => global + current user ka stream
             base = all.stream()
                     .filter(p -> {
                         String pk = p.getStreamKey() != null ? p.getStreamKey().toLowerCase() : "";
@@ -336,7 +315,6 @@ public class PreviousPaperService {
                     .toList();
         }
 
-        // search hamesha current scope ke andar
         if (search != null && !search.isBlank()) {
             String s = search.toLowerCase();
             base = base.stream()

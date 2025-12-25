@@ -2,13 +2,13 @@ package com.example.demo.dto;
 
 public class DashboardTrendingItemDto {
 
-    // "DOUBT" / "QUIZ"
+
     private String type;
 
     private Long id;
     private String title;
     private String subtitle;
-    private String meta; // e.g. "5 answers · 23 views"
+    private String meta; 
 
     public DashboardTrendingItemDto() {
     }

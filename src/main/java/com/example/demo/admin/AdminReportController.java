@@ -63,10 +63,6 @@ public class AdminReportController {
   
     ReportStatus st = ReportStatus.valueOf(req.status());
     service.updateStatus(id, st, req.adminNotes());
-    
-    // ✅ Apply user action only if target is USER
-// ✅ Apply user action only if target is USER
-// ✅ Apply user action if target looks like USER (USER / USER_PROFILE / etc.)
 String tt = (r.getTargetType() == null) ? "" : r.getTargetType().name();
 Long userId = r.getTargetId();
 

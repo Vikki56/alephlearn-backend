@@ -5,7 +5,7 @@ public class DashboardRecentQuizDto {
     private Long id;
     private String title;
     private String difficulty;
-    private Integer lastAttemptScore;   // null if never attempted
+    private Integer lastAttemptScore;   
 
     public DashboardRecentQuizDto() {
     }

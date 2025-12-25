@@ -7,7 +7,7 @@ public class AttemptHistoryItem {
     private Integer bestScore;
     private Long fastestMs;
     private Integer totalAttempts;
-    private Integer bestRank;   // ⭐ important
+    private Integer bestRank; 
 
     public AttemptHistoryItem() {
     }

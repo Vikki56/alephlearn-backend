@@ -10,9 +10,9 @@ public class CreateQuizRequest {
     private DifficultyLevel difficulty;
     private boolean isPublic;
     private boolean isRealtime;
-    private Integer durationSeconds; // only for realtime
+    private Integer durationSeconds; 
 
-    private List<QuizQuestionDto> questions;  // 👈 naya
+    private List<QuizQuestionDto> questions;  
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

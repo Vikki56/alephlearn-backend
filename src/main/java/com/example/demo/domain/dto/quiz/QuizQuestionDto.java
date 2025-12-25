@@ -5,13 +5,13 @@ import java.util.List;
 
 public class QuizQuestionDto {
     private Long id;
-    private QuizQuestionType type;   // MULTIPLE_CHOICE / TRUE_FALSE / CODING
+    private QuizQuestionType type;   
     private String text;
-    private List<String> options;    // MCQ options (0–4)
-    private Integer correctIndex;    // MCQ: 0-3
-    private Boolean correctBool;     // TRUE_FALSE
-    private String codingAnswer;     // CODING
-    private Integer ordinalPosition; // 1,2,3,...
+    private List<String> options;    
+    private Integer correctIndex;    
+    private Boolean correctBool;     
+    private String codingAnswer;     
+    private Integer ordinalPosition; 
 
     // getters + setters
     public Long getId() { return id; }

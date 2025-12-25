@@ -20,7 +20,6 @@ public class SwaggerConfig {
                 .title("AlephLearn API Docs")
                 .description("Backend API documentation for AlephLearn platform")
                 .version("1.0.0"))
-            // 🔐 Define the JWT Bearer scheme
             .components(new Components().addSecuritySchemes(
                 SECURITY_SCHEME_NAME,
                 new SecurityScheme()
@@ -29,7 +28,6 @@ public class SwaggerConfig {
                     .scheme("bearer")
                     .bearerFormat("JWT")
             ))
-            // ✅ Apply Bearer security globally (optional)
             .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME));
     }
 }

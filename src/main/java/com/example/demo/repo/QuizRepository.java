@@ -20,5 +20,4 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     List<Quiz> findByIsRealtimeTrueAndStatus(QuizStatus status);
     List<Quiz> findByCreatedByOrderByCreatedAtDesc(User createdBy);
     List<Quiz> findByIsPublicTrueAndSpecializationIgnoreCaseOrderByCreatedAtDesc(String specialization);
-    // List<Quiz> findByPublicTrue();
 }

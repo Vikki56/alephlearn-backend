@@ -19,7 +19,6 @@ public class AdminModerationService {
 
   public void warnUser(Long userId, String reason) {
     User u = users.findById(userId).orElseThrow();
-    // for now: just store reason (optional: add warnings counter later)
     u.setBlockReason(reason != null ? reason : "Warning issued");
     users.save(u);
   }

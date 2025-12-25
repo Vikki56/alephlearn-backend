@@ -11,25 +11,25 @@ public class ProfileSummaryDto {
     private String branchLabel;
 
     // core stats
-    private long problemsAttempted;   // doubts answered + F&Q claims
-    private long doubtsSolved;        // answers accepted
-    private long quizzesCreated;      // quizzes hosted
-    private long totalQuizAttempts;   // jitni baar user ne quiz diya
+    private long problemsAttempted;  
+    private long doubtsSolved;        
+    private long quizzesCreated;      
+    private long totalQuizAttempts;   
 
     // score
-    private long totalPoints;         // gamified score
+    private long totalPoints;        
 
     // global ranking
-    private long rankGlobal;          // 1,2,3...
-    private long totalUsersGlobal;    // kitne users consider hue
+    private long rankGlobal;         
+    private long totalUsersGlobal;   
 
-    // optional: duplicate summary (agar kahin aur use ho)
+
     private long totalUsers;
 
     // 🔥 NEW: streak-info
     private long daysActiveThisYear;
     private LocalDate lastLoginDate;
-    private List<String> loginDatesThisYear;   // 👈 naya field
+    private List<String> loginDatesThisYear;  
 
     public ProfileSummaryDto() {
     }

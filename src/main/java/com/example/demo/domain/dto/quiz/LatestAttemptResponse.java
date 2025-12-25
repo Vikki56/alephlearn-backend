@@ -9,7 +9,6 @@ public class LatestAttemptResponse {
     private Integer score;
     private Long timeTakenMillis;
 
-    // ISO string hai, front-end jo chahe kare
     private String submittedAt;
 
     public Long getAttemptId() {

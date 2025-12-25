@@ -24,12 +24,9 @@ public class MessageMediaController {
         if (audio == null || audio.isEmpty()) {
             return ResponseEntity.badRequest().body("No file");
         }
-        // Validate mimetype (best effort)
         String ct = Optional.ofNullable(audio.getContentType()).orElse("");
         if (!ALLOWED.contains(ct)) {
-            // accept unknown if extension is supported by browsers
-            // but safer to restrict; your call:
-            // return ResponseEntity.badRequest().body("Unsupported audio type: " + ct);
+
         }
 
         Path root = Paths.get("uploads/audio");
@@ -54,9 +51,7 @@ public class MessageMediaController {
     }
 
     private static String guessExt(String contentType, String originalName) {
-        // map a few common types
         if (MimeTypeUtils.APPLICATION_OCTET_STREAM_VALUE.equals(contentType)) {
-            // fallthrough to filename
         } else if ("audio/webm".equals(contentType)) return ".webm";
         else if ("audio/ogg".equals(contentType))   return ".ogg";
         else if ("audio/mpeg".equals(contentType))  return ".mp3";

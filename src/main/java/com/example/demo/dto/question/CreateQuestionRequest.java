@@ -8,6 +8,6 @@ public record CreateQuestionRequest(
         @NotBlank @Size(max = 255)  String title,
         @NotBlank @Size(max = 4000) String body,
         @Size(max = 255)            String imageUrl,
-        @Min(1)                     Integer maxClaimers, // optional; default in service if null
-        @NotBlank                   String askedBy       // can be taken from auth later
+        @Min(1)                     Integer maxClaimers, 
+        @NotBlank                   String askedBy       
 ) {}

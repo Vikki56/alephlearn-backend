@@ -12,5 +12,5 @@ public class RealtimeParticipantDto {
     private Long userId;
     private String username;
     private String email;
-    private boolean removable;   // host is allowed to remove this user or not
+    private boolean removable;   
 }

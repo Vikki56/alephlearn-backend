@@ -11,8 +11,6 @@ public class QuizAttemptDto {
     private Integer score;
     private Long timeTakenMillis;
     private Instant submittedAt;
-
-    // NEW
     private Integer totalQuestions;
     private Integer correctCount;
     private Integer wrongCount;

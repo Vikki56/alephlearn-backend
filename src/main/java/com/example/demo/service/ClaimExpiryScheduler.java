@@ -14,7 +14,7 @@ public class ClaimExpiryScheduler {
 
     private final ClaimRepository claims;
 
-    @Scheduled(fixedRate = 60_000) // every 1 min
+    @Scheduled(fixedRate = 60_000) 
     public void clearExpiredClaims() {
         Instant now = Instant.now();
 
